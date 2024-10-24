@@ -71,6 +71,28 @@ public class GoogleCloudStorageService {
 
         return String.format("File %s uploaded to bucket %s as %s", file.getOriginalFilename(), bucketName, blobId.getName());
     }
+//Metodo para subir archivo asociado al paciente
+    public String uploadFileForPaciente(Long pacienteId, MultipartFile file) throws IOException {
+
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+        String filePath = "paciente/" + pacienteId + "/documento/" + file.getOriginalFilename();
+
+        BlobId blobId = BlobId.of(bucketName, filePath);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
+        storage.create(blobInfo, file.getBytes());
+
+        // Guardar información del archivo en la base de datos
+        Documento documento = new Documento();
+        documento.setNombreArchivo(file.getOriginalFilename());
+        documento.setUrlArchivo(filePath);
+        documento.setPaciente(paciente);
+        documentoRepository.save(documento);
+
+
+        return String.format("File %s uploaded to bucket %s as %s", file.getOriginalFilename(), bucketName, blobId.getName());
+    }
 
     // Método para subir un archivo asociado a una cita
     public String uploadFileForCita(Long citaId, MultipartFile file) throws IOException {

@@ -12,7 +12,11 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     List<Documento> findByPacienteId(Long pacienteId);
 
     //Declara metodo para buscar documentos por id de la cita
-    List<Documento> findByCitaId(Long doctorId);
+    List<Documento> findByCitaId(Long citaId);
+
+    List<Documento> findByDoctorId(Long doctorId);
+
+    List<Documento> findByUsuarioId(Long usuarioId);
 
 
 
