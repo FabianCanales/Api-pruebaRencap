@@ -56,7 +56,8 @@ public class DocumentoRestController {
   //Descarga un archivo  por un usuario
     @GetMapping("/download/{pacienteId}/{fileName}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable Long pacienteId, @PathVariable String fileName) {
-        String fullPath = "pacientes/" + pacienteId + "/documentos/" + fileName;
+        String fullPath = "paciente/" + pacienteId + "/documento/" + fileName;
+        System.out.println(fullPath);
         byte[] data = storageService.downloadFile(fullPath);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
@@ -65,9 +66,11 @@ public class DocumentoRestController {
     }
 
     // Eliminar archivo
-    @DeleteMapping("/delete/{fileName}")
-    public String deleteFile(@PathVariable String fileName) {
-        return storageService.deleteFile(fileName);
+    @DeleteMapping("/delete/{pacienteId}/{fileName}")
+    public String deleteFile(@PathVariable String fileName, @PathVariable Long pacienteId) {
+
+        String fullPath = "paciente/" + pacienteId + "/documento/" + fileName;
+        return storageService.deleteFile(fullPath);
     }
 }
 

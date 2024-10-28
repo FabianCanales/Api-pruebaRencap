@@ -1,5 +1,6 @@
 package generation.springhospital.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,11 +14,12 @@ import lombok.*;
 public class Documento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty ("_id")
     private Long id;
     // Google Cloud Storage necesita el nombre del archivo para la descarga correcta de este
     private String nombreArchivo;
     private String UrlArchivo;
-    private String Url;
+
 //hacer conexión entre bdd de cita y dr.
     @ManyToOne
     private  Usuario usuario;

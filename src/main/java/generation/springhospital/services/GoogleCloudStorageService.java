@@ -22,10 +22,11 @@ import java.util.List;
 
 @Service
 public class GoogleCloudStorageService {
-    @Value("${google.cloud.storage.bucket-name}")
-    private String bucketName;
-    private final String SERVICE_ACCOUNT_JSON_PATH = "C:\\Users\\fabia\\Documents\\Proyectos Bootcamp\\Proyectos Java\\Spring boot\\SpringBootC14";
+    // @Value("${google.cloud.storage.bucket-name}")
+    private String bucketName = "bucket_web_master_java";
+    private final String SERVICE_ACCOUNT_JSON_PATH = "C:\\Users\\p\\Desktop\\prueba\\analog-oven-438313-i2-4b3211f09cd7.json";
     private final Storage storage;
+    // private final String GOOGLE_APPLICATION_CREDENTIALS = "C:\\Users\\p\\Desktop\\prueba\\analog-oven-438313-i2-b3b195ffa242.json";
 
 
     @Autowired
@@ -41,19 +42,22 @@ public class GoogleCloudStorageService {
 
     {
         try {
+            // System.out.println("Aca empieza el codigo");
             storage = StorageOptions.newBuilder()
                     .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(SERVICE_ACCOUNT_JSON_PATH)))
                     .build().getService();
+            // System.out.println("Aca termina :) ");
+            // System.out.println(bucketName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // Método para subir un archivo asociado a un paciente
+    // Método para subir un archivo asociado a un usuario
     public String uploadFileForUsuario(Long usuarioId, MultipartFile file) throws IOException {
 
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         String filePath = "usuarios/" + usuarioId + "/documentos/" + file.getOriginalFilename();
 
@@ -107,9 +111,11 @@ public class GoogleCloudStorageService {
         // Guardar información del archivo en la base de datos
         Documento documento = new Documento();
         documento.setNombreArchivo(file.getOriginalFilename());
-        documento.setUrl(filePath);
+        documento.setUrlArchivo(filePath);
         documento.setCita(cita);
         documentoRepository.save(documento);
+
+        System.out.println(blobId);
 
         return String.format("File %s uploaded to bucket %s as %s", file.getOriginalFilename(), bucketName, blobId.getName());
     }
@@ -117,6 +123,7 @@ public class GoogleCloudStorageService {
     // Método para descargar un archivo
     public byte[] downloadFile(String fileName) {
         Blob blob = storage.get(BlobId.of(bucketName, fileName));
+        System.out.println("Aqui llega el cod" + blob.exists());
         return blob.getContent();
     }
 
