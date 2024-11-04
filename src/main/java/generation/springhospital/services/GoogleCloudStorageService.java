@@ -1,14 +1,12 @@
 package generation.springhospital.services;
 
-import com.google.api.client.util.Value;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.*;
-import com.google.storage.v2.BucketName;
-import generation.springhospital.models.Cita;
+import generation.springhospital.models.Agendamiento;
 import generation.springhospital.models.Documento;
 import generation.springhospital.models.Paciente;
 import generation.springhospital.models.Usuario;
-import generation.springhospital.repositories.CitaRepository;
+import generation.springhospital.repositories.AgendamientoRepository;
 import generation.springhospital.repositories.DocumentoRepository;
 import generation.springhospital.repositories.PacienteRepository;
 import generation.springhospital.repositories.UsuarioRepository;
@@ -23,8 +21,8 @@ import java.util.List;
 @Service
 public class GoogleCloudStorageService {
     // @Value("${google.cloud.storage.bucket-name}")
-    private String bucketName = "bucket_web_master_java";
-    private final String SERVICE_ACCOUNT_JSON_PATH = "C:\\Users\\p\\Desktop\\prueba\\analog-oven-438313-i2-4b3211f09cd7.json";
+    private String bucketName = "example_bucket_renca";
+    private final String SERVICE_ACCOUNT_JSON_PATH = "C:\\Users\\Lenovo\\Downloads\\careful-muse-438313-k1-10a632007159.json";
     private final Storage storage;
     // private final String GOOGLE_APPLICATION_CREDENTIALS = "C:\\Users\\p\\Desktop\\prueba\\analog-oven-438313-i2-b3b195ffa242.json";
 
@@ -36,7 +34,7 @@ public class GoogleCloudStorageService {
     private PacienteRepository pacienteRepository;
 
     @Autowired
-    private CitaRepository citaRepository;
+    private AgendamientoRepository agendamientoRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -98,12 +96,12 @@ public class GoogleCloudStorageService {
         return String.format("File %s uploaded to bucket %s as %s", file.getOriginalFilename(), bucketName, blobId.getName());
     }
 
-    // Método para subir un archivo asociado a una cita
-    public String uploadFileForCita(Long citaId, MultipartFile file) throws IOException {
-        Cita cita = citaRepository.findById(citaId)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+    // Método para subir un archivo asociado a una agendamiento
+    public String uploadFileForAgendamiento(Long agendamientoId, MultipartFile file) throws IOException {
+        Agendamiento agendamiento = agendamientoRepository.findById(agendamientoId)
+                .orElseThrow(() -> new RuntimeException("agendamiento no encontrada"));
 
-        String filePath = "citas/" + citaId + "/documentos/" + file.getOriginalFilename();
+        String filePath = "agendamientos/" + agendamientoId + "/documentos/" + file.getOriginalFilename();
         BlobId blobId = BlobId.of(bucketName, filePath);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
         storage.create(blobInfo, file.getBytes());
@@ -112,7 +110,7 @@ public class GoogleCloudStorageService {
         Documento documento = new Documento();
         documento.setNombreArchivo(file.getOriginalFilename());
         documento.setUrlArchivo(filePath);
-        documento.setCita(cita);
+        documento.setAgendamiento(agendamiento);
         documentoRepository.save(documento);
 
         System.out.println(blobId);
@@ -132,9 +130,9 @@ public class GoogleCloudStorageService {
         return documentoRepository.findByPacienteId(pacienteId);
     }
 
-    // Método para listar archivos de una cita
-    public List<Documento> listFilesForCita(Long citaId) {
-        return documentoRepository.findByCitaId(citaId);
+    // Método para listar archivos de una agendamiento
+    public List<Documento> listFilesForAgendamiento(Long agendamientoId) {
+        return documentoRepository.findByAgendamientoId(agendamientoId);
     }
 
     // Método para eliminar un archivo

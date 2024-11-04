@@ -20,28 +20,28 @@ public class DocumentoRestController {
     @Autowired
     private GoogleCloudStorageService storageService;
 
-    // Subir archivo para un paciente
-    @PostMapping("/upload/paciente/{pacienteId}")
-    public String uploadFileForPaciente(@PathVariable Long pacienteId, @RequestParam("file") MultipartFile file) throws IOException {
-        return storageService.uploadFileForPaciente(pacienteId, file);
+    // Subir archivo para un usuario
+    @PostMapping("/upload/usuario/{usuarioId}")
+    public String uploadFileForUsuario(@PathVariable Long usuarioId, @RequestParam("file") MultipartFile file) throws IOException {
+        return storageService.uploadFileForUsuario(usuarioId, file);
     }
 
-    // Subir archivo para una cita
-    @PostMapping("/upload/cita/{citaId}")
-    public String uploadFileForCita(@PathVariable Long citaId, @RequestParam("file") MultipartFile file) throws IOException {
-        return storageService.uploadFileForCita(citaId, file);
+    // Subir archivo para una agendamiento
+    @PostMapping("/upload/agendamiento/{agendamientoId}")
+    public String uploadFileForAgendamiento(@PathVariable Long agendamientoId, @RequestParam("file") MultipartFile file) throws IOException {
+        return storageService.uploadFileForAgendamiento(agendamientoId, file);
     }
 
-    // Listar archivos para un paciente
-    @GetMapping("/list/paciente/{pacienteId}")
-    public List<Documento> listFilesForPaciente(@PathVariable Long pacienteId) {
-        return storageService.listFilesForPaciente(pacienteId);
+    // Listar archivos para un usuario
+    @GetMapping("/list/usuario/{usuarioId}")
+    public List<Documento> listFilesForUsuario(@PathVariable Long usuarioId) {
+        return storageService.listFilesForUsuario(usuarioId);
     }
 
-    // Listar archivos para una cita
-    @GetMapping("/list/cita/{citaId}")
-    public List<Documento> listFilesForCita(@PathVariable Long citaId) {
-        return storageService.listFilesForCita(citaId);
+    // Listar archivos para una agendamiento
+    @GetMapping("/list/agendamiento/{agendamientoId}")
+    public List<Documento> listFilesForAgendamiento(@PathVariable Long agendamientoId) {
+        return storageService.listFilesForAgendamiento(agendamientoId);
     }
 
     /*
@@ -55,9 +55,9 @@ public class DocumentoRestController {
                 .body(data);
     }*/
   //Descarga un archivo  por un usuario
-    @GetMapping("/download/{pacienteId}/{fileName}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable Long pacienteId, @PathVariable String fileName) {
-        String fullPath = "paciente/" + pacienteId + "/documento/" + fileName;
+    @GetMapping("/download/{usuarioId}/{fileName}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable Long usuarioId, @PathVariable String fileName) {
+        String fullPath = "usuario/" + usuarioId + "/documento/" + fileName;
         System.out.println(fullPath);
         byte[] data = storageService.downloadFile(fullPath);
         return ResponseEntity.ok()
@@ -67,10 +67,10 @@ public class DocumentoRestController {
     }
 
     // Eliminar archivo
-    @DeleteMapping("/delete/{pacienteId}/{fileName}")
-    public String deleteFile(@PathVariable String fileName, @PathVariable Long pacienteId) {
+    @DeleteMapping("/delete/{usuarioId}/{fileName}")
+    public String deleteFile(@PathVariable String fileName, @PathVariable Long usuarioId) {
 
-        String fullPath = "paciente/" + pacienteId + "/documento/" + fileName;
+        String fullPath = "usuario/" + usuarioId + "/documento/" + fileName;
         return storageService.deleteFile(fullPath);
     }
 }

@@ -20,12 +20,12 @@ public class Documento {
     private String nombreArchivo;
     private String UrlArchivo;
 
-//hacer conexión entre bdd de cita y dr.
+//hacer conexión entre bdd de agendamiento y dr.
     @ManyToOne
     private  Usuario usuario;
 
     @ManyToOne
-    private Cita cita;
+    private Agendamiento agendamiento;
 
     @ManyToOne
     private Doctor doctor;
